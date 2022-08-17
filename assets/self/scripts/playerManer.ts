@@ -1,17 +1,5 @@
-import { _decorator, Component, Node, RigidBody, PhysicsSystem, Vec3, EventTouch, __private, MeshRenderer, Material } from "cc";
+import { _decorator, Component, Node, RigidBody, PhysicsSystem, Vec3, EventTouch, __private, MeshRenderer, Material, Collider, SphereCollider, Director } from "cc";
 const { ccclass, property } = _decorator;
-
-/**
- * Predefined variables
- * Name = playerManer
- * DateTime = Fri Aug 05 2022 16:47:47 GMT+0800 (中国标准时间)
- * Author = keviiin
- * FileBasename = playerManer.ts
- * FileBasenameNoExtension = playerManer
- * URL = db://assets/scripts/playerManer.ts
- * ManualUrl = https://docs.cocos.com/creator/3.4/manual/zh/
- *
- */
 
 @ccclass("playerManer")
 export class playerManer extends Component {
@@ -42,40 +30,27 @@ export class playerManer extends Component {
 	onLoad() {
 		console.log("player load");
 
-		console.log("thisball materials:", this.ball.getComponent(MeshRenderer));
 		// 物理系统实例
-		PhysicsSystem.instance.enable = true;
+		// PhysicsSystem.instance.enable = true;
 		// 为小球添加线性推力
 		this.ballRigidBody = this.ball.getComponent(RigidBody);
-
+		// var manager = Director.getCollisionManager();
+		// manager.enabled = true;
+		// 开启碰撞检测
+		// Director.collisionManager.enabled = true;
 		// this.MTLCOPY();
 
 		this.node.on(Node.EventType.TOUCH_START, this.touchStart, this);
 		this.node.on(Node.EventType.TOUCH_MOVE, this.touchMove, this);
 		this.node.on(Node.EventType.TOUCH_END, this.touchEnd, this);
+		let coll = this.ball.getComponent(SphereCollider);
+		coll.enabled = true;
+		coll.on("onCollisionEnter", this.onCollisionEnter, this);
 	}
-	// MTLCOPY() {
-	// 	// 复制mtl
-	// 	let mtl = this.getMaterial();
-	// 	console.log("mtl start:", mtl);
-	// 	let material = new Material();
+	onCollisionEnter(event) {
+		console.log("onCollisionEnter");
+	}
 
-	// 	mtl.copy(material);
-
-	// 	this.ball.getComponent(MeshRenderer).setMaterial(material, 0);
-	// 	mtl = material;
-	// 	material.setProperty("mainColor", new Color(255, 0, 0, 255));
-
-	// 	// 设置材质颜色参数
-	// }
-	// getMaterial() {
-	// 	let meshRenderer = this.ball.getComponent(MeshRenderer);
-	// 	if (!meshRenderer) {
-	// 		return null;
-	// 	}
-	// 	let mat = this.node.getComponent(MeshRenderer).getMaterial(0);
-	// 	return mat;
-	// }
 	touchStart(event: EventTouch) {
 		this.gameStart = true;
 		this.guideUI.active = false;
