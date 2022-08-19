@@ -239,8 +239,6 @@ export class playerManer extends Component {
 		this.camera.setPosition(this.camera.getPosition().x, this.camera.getPosition().y, this.camera.getPosition().z + sub / 10);
 		//设置相机的距离
 		// this.camera.setWorldPosition(cameraWorldPos.x, cameraWorldPos.y, -dis);
-
-
 	}
 
 	updateLever(lever: number) {
