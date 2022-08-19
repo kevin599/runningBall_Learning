@@ -41,6 +41,9 @@ export class playerManer extends Component {
 	@property
 	power: number = 11;
 
+	@property({ displayName: "小球到墙的距离", tooltip: "小球到两边墙体的距离" })
+	borderDis: number = 1.2;
+
 	gameStart: boolean = false;
 	// 添加小球刚体变量
 	ballRigidBody: RigidBody = null;
@@ -90,81 +93,89 @@ export class playerManer extends Component {
 	}
 	init() {}
 	onCollisionEnter(event: ICollisionEvent) {
-		let attach_group = event.otherCollider.getGroup();
-		// console.log("other:", attach_group);
-		switch (attach_group) {
-			case 1:
-				break;
-			case 2:
-				++this.curLeverNum;
-				this.updateLever(this.curLeverNum);
-				// 消失
-				event.otherCollider.node.active = false;
-				break;
-			case 4:
-				++this.curLeverNum;
-				this.updateLever(this.curLeverNum);
-				// 消失
-				event.otherCollider.node.active = false;
-				break;
-			case 8:
-				++this.curLeverNum;
-				this.updateLever(this.curLeverNum);
-				// 消失
-				event.otherCollider.node.active = false;
-				break;
-			case 16:
-				++this.curLeverNum;
-				this.updateLever(this.curLeverNum);
-				// 消失
-				event.otherCollider.node.active = false;
-				break;
-			case 32:
-				++this.curLeverNum;
-				this.updateLever(this.curLeverNum);
-				// 消失
-				event.otherCollider.node.active = false;
-				break;
-			case 64:
-				++this.curLeverNum;
-				this.updateLever(this.curLeverNum);
-				// 消失
-				event.otherCollider.node.active = false;
-				break;
-			case 128:
-				++this.curLeverNum;
-				this.updateLever(this.curLeverNum);
-				// 消失
-				event.otherCollider.node.active = false;
-				break;
-			case 256:
-				++this.curLeverNum;
-				this.updateLever(this.curLeverNum);
-				// 消失
-				event.otherCollider.node.active = false;
-				break;
-			case 512:
-				++this.curLeverNum;
-				this.updateLever(this.curLeverNum);
-				// 消失
-				event.otherCollider.node.active = false;
-				break;
-			case 1024:
-				++this.curLeverNum;
-				this.updateLever(this.curLeverNum);
-				// 消失
-				event.otherCollider.node.active = false;
-				break;
-			case 2048:
-				++this.curLeverNum;
-				this.updateLever(this.curLeverNum);
-				// 消失
-				event.otherCollider.node.active = false;
-				break;
-			default:
-				console.log("is default");
+		let other_attach_group = event.otherCollider.getGroup();
+		let self_attach_group = event.selfCollider.getGroup();
+		console.log("碰撞到的小球分组:", other_attach_group);
+		if (self_attach_group == other_attach_group) {
+			switch (other_attach_group) {
+				case 1:
+					if (this.ball.getPosition().x <= -this.borderDis) {
+						this.ball.setPosition(-this.borderDis, this.ball.getPosition().y, this.ball.getPosition().z);
+					} else if (this.ball.getPosition().x >= this.borderDis) {
+						this.ball.setPosition(this.borderDis, this.ball.getPosition().y, this.ball.getPosition().z);
+					}
+					break;
+				case 2:
+					++this.curLeverNum;
+					this.updateLever(this.curLeverNum);
+					// 消失
+					event.otherCollider.node.active = false;
+					break;
+				case 4:
+					++this.curLeverNum;
+					this.updateLever(this.curLeverNum);
+					// 消失
+					event.otherCollider.node.active = false;
+					break;
+				case 8:
+					++this.curLeverNum;
+					this.updateLever(this.curLeverNum);
+					// 消失
+					event.otherCollider.node.active = false;
+					break;
+				case 16:
+					++this.curLeverNum;
+					this.updateLever(this.curLeverNum);
+					// 消失
+					event.otherCollider.node.active = false;
+					break;
+				case 32:
+					++this.curLeverNum;
+					this.updateLever(this.curLeverNum);
+					// 消失
+					event.otherCollider.node.active = false;
+					break;
+				case 64:
+					++this.curLeverNum;
+					this.updateLever(this.curLeverNum);
+					// 消失
+					event.otherCollider.node.active = false;
+					break;
+				case 128:
+					++this.curLeverNum;
+					this.updateLever(this.curLeverNum);
+					// 消失
+					event.otherCollider.node.active = false;
+					break;
+				case 256:
+					++this.curLeverNum;
+					this.updateLever(this.curLeverNum);
+					// 消失
+					event.otherCollider.node.active = false;
+					break;
+				case 512:
+					++this.curLeverNum;
+					this.updateLever(this.curLeverNum);
+					// 消失
+					event.otherCollider.node.active = false;
+					break;
+				case 1024:
+					++this.curLeverNum;
+					this.updateLever(this.curLeverNum);
+					// 消失
+					event.otherCollider.node.active = false;
+					break;
+				case 2048:
+					++this.curLeverNum;
+					this.updateLever(this.curLeverNum);
+					// 消失
+					event.otherCollider.node.active = false;
+					break;
+				default:
+					console.log("is default");
 
-				break;
+					break;
+			}
 		}
 	}
 
@@ -179,7 +190,7 @@ export class playerManer extends Component {
 
 		// 获取手指在屏幕上的坐标
 		this.touchStartPos = event.getLocation();
-		console.log("touchStart:", this.touchStartPos);
+		// console.log("touchStart:", this.touchStartPos);
 	}
 	touchMove(event: EventTouch) {
 		// console.log("getStartLocation", event.getStartLocation());
@@ -196,13 +207,13 @@ export class playerManer extends Component {
 		let previousLocation = event.getPreviousLocation();
 		let movePos = event.getLocation();
 		let touchMoveDis = movePos.subtract(previousLocation);
-		console.log("touchDis:", touchMoveDis);
+		// console.log("touchDis:", touchMoveDis);
 		// 设置小球的x坐标
 		let ballPos = this.ball.getPosition();
 		this.ball.setPosition(ballPos.x + touchMoveDis.x / 100, ballPos.y);
 	}
 	touchEnd(event: EventTouch) {
-		console.log("touch end");
+		// console.log("touch end");
 	}
 
 	start() {
@@ -213,7 +224,7 @@ export class playerManer extends Component {
 		//获取相机与小球的距离
 		let dis = ballWorldPos.subtract(cameraWorldPos).length();
 		this.disBewteenBallAndCamera = dis;
-		console.log("dis:", dis);
+		// console.log("dis:", dis);
 	}
 
 	update(deltaTime: number) {
@@ -235,15 +246,24 @@ export class playerManer extends Component {
 		let dis = ballWorldPos.subtract(cameraWorldPos).length();
 
 		let sub = this.disBewteenBallAndCamera - dis;
-
+		//摄像机抖动
 		this.camera.setPosition(this.camera.getPosition().x, this.camera.getPosition().y, this.camera.getPosition().z + sub / 10);
 		//设置相机的距离
 		// this.camera.setWorldPosition(cameraWorldPos.x, cameraWorldPos.y, -dis);
+
+		// let temp: Vec3 = new Vec3();
+		// Vec3.add(temp, this.lookAt.worldPosition, new Vec3(0, this.positionOffset.y, this.positionOffset.z));
+		// this.node.position = this.node.position.lerp(temp, this.moveSmooth);
 	}
 
 	updateLever(lever: number) {
 		// 设置分组
-		this.ball.getComponent(Collider).attachedRigidBody.group = this.npcLever[lever];
+		// this.ball.getComponent(Collider).attachedRigidBody.group = this.npcLever[lever];
+		// this.ball.getComponent(Collider).attachedRigidBody.group = Math.pow(2, lever + 1);
+
+		this.ball.getComponent(Collider).attachedRigidBody.group = Math.pow(2, lever + 1);
+		console.log("小球当前的group:", this.ball.getComponent(Collider).attachedRigidBody.group);
+
 		// console.log(this.ball.getComponent(Collider).getGroup());
 		// 获取scale
 		let scale = this.ball.getScale();

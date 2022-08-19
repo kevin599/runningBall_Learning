@@ -44,12 +44,15 @@ export class game extends Component {
 		for (let i = 0; i < num; i++) {
 			let npc = instantiate(this.npc);
 			npc.parent = this.npcParent;
-			npc.setPosition(0.8, 4, -1 * (2 + 2 * i));
+			npc.setPosition(0, 4, -1 * (2 + 2 * i));
 			// this.SETMTL(i);
 
 			npc.getComponent(MeshRenderer).material.setProperty("mainColor", new Color(new Color().fromHEX(this.npcColor[i])));
 			// 为小球添加分组
-			npc.getComponent(Collider).attachedRigidBody.group = this.npcLever[i];
+			npc.getComponent(Collider).attachedRigidBody.group = Math.pow(2, i + 1);
+			// 分组要设置成2的group次方
+			// 相当于
+
 			// let npc1 = instantiate(this.npc);
 			// npc1.parent = this.npcParent;
 			// npc1.setPosition(-0.8, 4, -1 * (2 + 2 * i));
