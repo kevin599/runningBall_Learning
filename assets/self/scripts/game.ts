@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, Prefab, instantiate, director, System, SystemEvent, Material, MeshRenderer, Color, Collider } from "cc";
+import { _decorator, Component, Node, Prefab, instantiate, Material, MeshRenderer, Color, Collider } from "cc";
 const { ccclass, property } = _decorator;
 
 @ccclass("game")
@@ -23,7 +23,7 @@ export class game extends Component {
 	npcColor = ["#bedbfeff", "#00bdffff", "#3ae474", "#8963ff", "#1eebff", "#017aff", "#0373ff", "#ff9bf7", "#ffb408", "#ff2eff", "#f8321f"];
 	onLoad() {
 		console.log("game load");
-		this.MAPINIT(10);
+		this.MAPINIT(20);
 
 		this.BALLINIT(this.npcLever.length - 1);
 		// 监听自定义事件
@@ -43,8 +43,11 @@ export class game extends Component {
 	BALLINIT(num) {
 		for (let i = 0; i < num; i++) {
 			let npc = instantiate(this.npc);
+
 			npc.parent = this.npcParent;
-			npc.setPosition(0, 4, -1 * (2 + 2 * i));
+
+			npc.setPosition(i % 2 == 0 ? 0.75 : -0.75, 3.5, -1 * (2.5 + 2.25 * i));
+			// 最后一个 z = -1 * (3 + 2.25 * 9 )≈23
 			// this.SETMTL(i);
 
 			npc.getComponent(MeshRenderer).material.setProperty("mainColor", new Color(new Color().fromHEX(this.npcColor[i])));
@@ -55,7 +58,7 @@ export class game extends Component {
 
 			// let npc1 = instantiate(this.npc);
 			// npc1.parent = this.npcParent;
-			// npc1.setPosition(-0.8, 4, -1 * (2 + 2 * i));
+			// npc1.setPosition(i % 2 == 0 ? -0.8 : 0.8, 3.5, -1 * (2 + 2 * i));
 			// npc1.getComponent(MeshRenderer).material.setProperty("mainColor", new Color(new Color().fromHEX(this.npcColor[i])));
 			// npc1.getComponent(Collider).attachedRigidBody.group = this.npcLever[i];
 		}
@@ -84,4 +87,6 @@ export class game extends Component {
 	start() {
 		console.log("game start");
 	}
+
+	// 设置resize回调
 }
