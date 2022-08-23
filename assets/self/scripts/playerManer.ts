@@ -27,7 +27,7 @@ const { ccclass, property } = _decorator;
 
 @ccclass("playerManer")
 export class playerManer extends Component {
-	@property({ type: Node, visible: true, displayName: "球节点", tooltip: "球节点" })
+	@property({ type: Node})
 	ball: Node = null;
 
 	@property({ type: Node })
@@ -45,10 +45,16 @@ export class playerManer extends Component {
 	@property({ type: Node })
 	camera: Node = null;
 
+	@property({ type: Node })
+	playertext: Node = null;
+
+	@property({ type: Node })
+	uitext: Node = null;
+
 	@property
 	power: number = 11;
 
-	@property({ displayName: "小球到墙的距离", tooltip: "小球到两边墙体的距离" })
+	@property
 	borderDis: number = 1.2;
 
 	gameStart: boolean = false;
@@ -59,10 +65,10 @@ export class playerManer extends Component {
 	@property({ type: Material })
 	mtl: Material = null;
 
-	@property({ type: CCFloat, displayName: "合成小球涨大scale", tooltip: "当前scale增加当前系数" })
+	@property({ type: CCFloat })
 	scale: number = 0.01;
 
-	@property({ type: Prefab, displayName: "彩带特效预制体" })
+	@property({ type: Prefab })
 	caidai: Prefab = null;
 
 	curLeverNum: number = 0;
@@ -83,18 +89,10 @@ export class playerManer extends Component {
 	npcLever = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048];
 	npcColor = ["#bedbfe", "#00bdff", "#3ae474", "#8963ff", "#1eebff", "#017aff", "#0373ff", "#ff9bf7", "#ffb408", "#ff2eff", "#f8321f"];
 	onLoad() {
-		// console.log("player load");
 
-		this.init();
-		// 物理系统实例
-		// PhysicsSystem.instance.enable = true;
 		// 为小球添加线性推力
 		this.ballRigidBody = this.ball.getComponent(RigidBody);
-		// var manager = Director.getCollisionManager();
-		// manager.enabled = true;
-		// 开启碰撞检测
-		// Director.collisionManager.enabled = true;
-		// this.MTLCOPY();
+		this.ball.getComponent(MeshRenderer).material.setProperty("mainColor", new Color(new Color().fromHEX(this.npcColor[0])));
 
 		this.node.on(Node.EventType.TOUCH_START, this.touchStart, this);
 		this.node.on(Node.EventType.TOUCH_MOVE, this.touchMove, this);
@@ -120,6 +118,7 @@ export class playerManer extends Component {
 		director.once("end", this.end, this);
 		director.once("popshow", this.popShow, this);
 	}
+
 	end() {
 		console.log(" emit end");
 		director.emit("popshow");
@@ -131,7 +130,7 @@ export class playerManer extends Component {
 		// this.ballRigidBody.setAngularVelocity(new Vec3(-2 * this.power, 0, 0));
 		this.gameEnd = true;
 	}
-	init() {}
+
 	onCollisionEnter(event: ICollisionEvent) {
 		let other_attach_group = event.otherCollider.getGroup();
 		let self_attach_group = event.selfCollider.getGroup();
@@ -264,24 +263,19 @@ export class playerManer extends Component {
 		if (this.gameStart) {
 			this.ballRigidBody.setAngularVelocity(new Vec3(-this.power, 0, 0));
 		}
-		// ball fall down or || ball move to the end && and this.gameStart is false
 		if (this.ball.getPosition().z <= -22) {
 			// 假设一个都不变就位移到最后一个npc的位置就结束
 			director.emit("popshow");
 			director.emit("end");
-			// 将ball的位置设置为npc的最后一个儿子的位置
-			// this.ball.setPosition(find("npc_0").getPosition());
 			// 清除力
 			this.ballRigidBody.setAngularVelocity(new Vec3(0, 0, 0));
 			this.gameStart = false;
 			this.gameEnd = true;
 		}
-		if (this.ball.getPosition().y <= 3.25 && !this.gameStart) {
-			// 假设一个都不变就位移到最后一个npc的位置就结束
+		if (this.ball.getPosition().y < 0 && this.gameStart) {
 			director.emit("popshow");
 			director.emit("end");
-			// 将ball的位置设置为npc的最后一个儿子的位置
-			this.ball.setPosition(find("npc_0").getPosition());
+
 			// 清除力
 			this.ballRigidBody.setAngularVelocity(new Vec3(0, 0, 0));
 			this.gameStart = false;
