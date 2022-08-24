@@ -3,7 +3,7 @@ const { ccclass, property } = _decorator;
 
 @ccclass("headscript")
 export class headscript extends Component {
-	// 3d人物头顶的文字
+	// 3d模型上的跟踪位置
 	@property(Node)
 	target: Node = null!;
 	//3d摄像机
@@ -16,6 +16,8 @@ export class headscript extends Component {
 	private _pos: Vec3 = new Vec3();
 
 	update() {
+
+		// 球
 		const wpos = this.target.worldPosition;
 		// @ts-ignore
 		if (!this.camera!._camera || this._lastWPos.equals(wpos)) {
@@ -38,14 +40,3 @@ export class headscript extends Component {
 		this.node.setScale(value, value, 1);
 	}
 }
-
-/**
- * [1] Class member could be defined like this.
- * [2] Use `property` decorator if your want the member to be serializable.
- * [3] Your initialization goes here.
- * [4] Your update function goes here.
- *
- * Learn more about scripting: https://docs.cocos.com/creator/3.4/manual/zh/scripting/
- * Learn more about CCClass: https://docs.cocos.com/creator/3.4/manual/zh/scripting/decorator.html
- * Learn more about life-cycle callbacks: https://docs.cocos.com/creator/3.4/manual/zh/scripting/life-cycle-callbacks.html
- */

@@ -21,13 +21,14 @@ import {
 	tween,
 	Prefab,
 	instantiate,
-	find,
+	loader,
+	Texture2D,
 } from "cc";
 const { ccclass, property } = _decorator;
 
 @ccclass("playerManer")
 export class playerManer extends Component {
-	@property({ type: Node})
+	@property({ type: Node })
 	ball: Node = null;
 
 	@property({ type: Node })
@@ -44,12 +45,6 @@ export class playerManer extends Component {
 
 	@property({ type: Node })
 	camera: Node = null;
-
-	@property({ type: Node })
-	playertext: Node = null;
-
-	@property({ type: Node })
-	uitext: Node = null;
 
 	@property
 	power: number = 11;
@@ -85,11 +80,13 @@ export class playerManer extends Component {
 	touchMovePos: Vec2 = new Vec2();
 
 	disBewteenBallAndCamera: number = 0;
+	@property({ type: Texture2D })
+	textureBase: Texture2D[] = [];
 
 	npcLever = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048];
 	npcColor = ["#bedbfe", "#00bdff", "#3ae474", "#8963ff", "#1eebff", "#017aff", "#0373ff", "#ff9bf7", "#ffb408", "#ff2eff", "#f8321f"];
 	onLoad() {
-
+		console.log(this.ball.getComponent(MeshRenderer).material.passes[0]);
 		// 为小球添加线性推力
 		this.ballRigidBody = this.ball.getComponent(RigidBody);
 		this.ball.getComponent(MeshRenderer).material.setProperty("mainColor", new Color(new Color().fromHEX(this.npcColor[0])));
@@ -134,6 +131,7 @@ export class playerManer extends Component {
 	onCollisionEnter(event: ICollisionEvent) {
 		let other_attach_group = event.otherCollider.getGroup();
 		let self_attach_group = event.selfCollider.getGroup();
+
 		// console.log("碰撞到的小球分组:", other_attach_group);
 		if (self_attach_group == other_attach_group) {
 			switch (other_attach_group) {
@@ -146,67 +144,77 @@ export class playerManer extends Component {
 					break;
 				case 2:
 					++this.curLeverNum;
-					this.updateLever(this.curLeverNum);
+					this.updateLever(this.curLeverNum, event.otherCollider.node);
 					// 消失
 					event.otherCollider.node.active = false;
 					break;
 				case 4:
 					++this.curLeverNum;
-					this.updateLever(this.curLeverNum);
+					// this.updateLever(this.curLeverNum);
+					this.updateLever(this.curLeverNum, event.otherCollider.node);
 					// 消失
 					event.otherCollider.node.active = false;
 					break;
 				case 8:
 					++this.curLeverNum;
-					this.updateLever(this.curLeverNum);
+					// this.updateLever(this.curLeverNum);
+					this.updateLever(this.curLeverNum, event.otherCollider.node);
 					// 消失
 					event.otherCollider.node.active = false;
 					break;
 				case 16:
 					++this.curLeverNum;
-					this.updateLever(this.curLeverNum);
+					// this.updateLever(this.curLeverNum);
+					this.updateLever(this.curLeverNum, event.otherCollider.node);
 					// 消失
 					event.otherCollider.node.active = false;
 					break;
 				case 32:
 					++this.curLeverNum;
-					this.updateLever(this.curLeverNum);
+					// this.updateLever(this.curLeverNum);
+					this.updateLever(this.curLeverNum, event.otherCollider.node);
 					// 消失
 					event.otherCollider.node.active = false;
 					break;
 				case 64:
 					++this.curLeverNum;
-					this.updateLever(this.curLeverNum);
+					// this.updateLever(this.curLeverNum);
+					this.updateLever(this.curLeverNum, event.otherCollider.node);
 					// 消失
 					event.otherCollider.node.active = false;
 					break;
 				case 128:
 					++this.curLeverNum;
-					this.updateLever(this.curLeverNum);
+					// this.updateLever(this.curLeverNum);
+					this.updateLever(this.curLeverNum, event.otherCollider.node);
 					// 消失
 					event.otherCollider.node.active = false;
 					break;
 				case 256:
 					++this.curLeverNum;
-					this.updateLever(this.curLeverNum);
+					// this.updateLever(this.curLeverNum);
+					this.updateLever(this.curLeverNum, event.otherCollider.node);
 					// 消失
 					event.otherCollider.node.active = false;
 					break;
 				case 512:
 					++this.curLeverNum;
-					this.updateLever(this.curLeverNum);
+					// this.updateLever(this.curLeverNum);
+					this.updateLever(this.curLeverNum, event.otherCollider.node);
 					// 消失
 					event.otherCollider.node.active = false;
 					break;
 				case 1024:
 					++this.curLeverNum;
-					this.updateLever(this.curLeverNum);
+					// this.updateLever(this.curLeverNum);
+					this.updateLever(this.curLeverNum, event.otherCollider.node);
 					// 消失
 					event.otherCollider.node.active = false;
 					break;
 				case 2048:
 					++this.curLeverNum;
-					this.updateLever(this.curLeverNum);
+					// this.updateLever(this.curLeverNum);
+					this.updateLever(this.curLeverNum, event.otherCollider.node);
 					// 消失
 					event.otherCollider.node.active = false;
 					// 发射游戏结束事件
@@ -297,7 +305,7 @@ export class playerManer extends Component {
 		}
 	}
 
-	updateLever(lever: number) {
+	updateLever(lever: number, other_node?: Node) {
 		this.ball.getComponent(Collider).attachedRigidBody.group = Math.pow(2, lever + 1);
 		let ball_lever = this.ball.getComponent(Collider).attachedRigidBody.group;
 		// console.log("小球当前的group:", ball_lever);
@@ -307,7 +315,10 @@ export class playerManer extends Component {
 		// 设置scale 涨大
 		this.ball.setScale(new Vec3(scale.x + this.scale, scale.y + this.scale, scale.z + this.scale));
 		// 球变色
-		this.ball.getComponent(MeshRenderer).material.setProperty("mainColor", new Color(new Color().fromHEX(this.npcColor[lever])));
+		// this.ball.getComponent(MeshRenderer).material.setProperty("mainColor", new Color(new Color().fromHEX(this.npcColor[lever])));
+		// this.ball.getComponent(MeshRenderer).material.setProperty("albedoMap", other_node.getComponent(MeshRenderer).material.getProperty("albedoMap"));
+		this.ball.getComponent(MeshRenderer).material.setProperty("albedoMap", this.textureBase[lever]);
+
 		if (ball_lever == this.npcLever[this.npcLever.length - 1]) {
 			director.emit("popshow");
 			director.emit("end");
@@ -318,6 +329,7 @@ export class playerManer extends Component {
 	popShow() {
 		let caidaiprefab = instantiate(this.caidai);
 		// 将caidai放在小球的位置
+		caidaiprefab.setRotationFromEuler(new Vec3(0, -90, 0));
 		caidaiprefab.setParent(this.ball);
 		console.log("popshow");
 		this.ballRigidBody.setAngularVelocity(new Vec3(0, 0, 0));

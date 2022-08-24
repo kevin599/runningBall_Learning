@@ -65,6 +65,9 @@
       "10": 5123,
       "11": 6147,
       "12": 8191
+    },
+    "defaultMaterial": {
+      "restitution": 0
     }
   }
 }

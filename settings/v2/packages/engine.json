@@ -96,14 +96,14 @@
       "base",
       "gfx-webgl",
       "gfx-webgl2",
-      "webview",
-      "tween",
       "3d",
+      "2d",
+      "ui",
       "particle",
       "physics-ammo",
       "primitive",
-      "2d",
-      "ui"
+      "webview",
+      "tween"
     ],
     "noDeprecatedFeatures": {
       "value": true,

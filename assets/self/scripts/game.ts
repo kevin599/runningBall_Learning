@@ -1,9 +1,28 @@
-import { _decorator, Component, Node, Prefab, instantiate, Material, MeshRenderer, Color, Collider, Script } from "cc";
+import {
+	_decorator,
+	Component,
+	Node,
+	Prefab,
+	instantiate,
+	Material,
+	MeshRenderer,
+	Color,
+	Collider,
+	Script,
+	RichText,
+	find,
+	Camera,
+	UITransform,
+	math,
+	Texture2D,
+	director,
+	loader,
+} from "cc";
+import { headscript } from "./headscript";
 const { ccclass, property } = _decorator;
 
 @ccclass("game")
 export class game extends Component {
-	// 材质
 	@property({ type: Material })
 	ball_mtl: Material = null;
 
@@ -16,23 +35,24 @@ export class game extends Component {
 	@property({ type: Node })
 	roadParent: Node = null;
 
-	@property({ type: Script })
-	headScript: Script = null;
-
 	@property({ type: Node })
 	npcParent: Node = null;
 
+	@property({ type: Camera })
+	mainCamera: Camera = null;
+
+	@property({ type: Texture2D })
+	textureBase: Texture2D[] = [];
+
 	npcLever = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048];
 	npcColor = ["#bedbfeff", "#00bdffff", "#3ae474", "#8963ff", "#1eebff", "#017aff", "#0373ff", "#ff9bf7", "#ffb408", "#ff2eff", "#f8321f"];
-
 
 	onLoad() {
 		console.log("game load");
 		this.MAPINIT(30);
 
 		this.BALLINIT(this.npcColor.length - 1);
-		// 监听自定义事件
-		// console.log(this.npcColor[1]);
+		find("/player/player").getComponent(MeshRenderer).material.setProperty("albedoMap", this.textureBase[0]);
 	}
 
 	// 桥初始化
@@ -61,9 +81,14 @@ export class game extends Component {
 			// 最后一个 z = -1 * (3 + 2.25 * 9 )≈23
 			// this.SETMTL(i);
 
-			npc.getComponent(MeshRenderer).material.setProperty("mainColor", new Color(new Color().fromHEX(this.npcColor[i])));
+			// npc.getComponent(MeshRenderer).material.setProperty("mainColor", new Color(new Color().fromHEX(this.npcColor[i])));
 			// 为小球添加分组
 			npc.getComponent(Collider).attachedRigidBody.group = Math.pow(2, i + 1);
+
+			// npc 贴图
+			let pass = npc.getComponent(MeshRenderer).material.passes[0];
+			// pass.properties.albedoMap.value = this.textureBase[0];
+			npc.getComponent(MeshRenderer).material.setProperty("albedoMap", this.textureBase[i]);
 		}
 	}
 
@@ -96,7 +121,27 @@ export class game extends Component {
 		console.log("game start");
 	}
 
-	addHeadScript(node:Node){
-		// node.setComponent
+	download() {
+		console.log("download");
+		gameDownload();
 	}
+
+	// addRichText(num: Number, node: Node) {
+	// 	// node.setComponent
+	// 	// script.carema = main carema
+	// 	// script.target = npc:Node.children(name:playertext)
+	// 	// script mount in uitext:Node(RichText)
+	// 	// 1 new uinode richtext into canvas
+	// 	let richtext = instantiate(this.uiRichText);
+	// 	richtext.setParent(find("/Canvas"));
+	// 	richtext.name = `richText${num}`;
+	// 	richtext.getComponent(RichText).string = `<outline color=#1d2b3e width=1><b>${num}</b></outline>`;
+	// 	// 2 script mount in uinode
+	// 	richtext.addComponent(headscript);
+	// 	// set carema , target
+	// 	let script = richtext.getComponent(headscript);
+	// 	script.camera = this.mainCamera;
+	// 	script.target = node.getChildByName("playertext");
+	// 	script.distance = 5;
+	// }
 }
