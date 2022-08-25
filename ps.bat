@@ -1,0 +1,1 @@
+.\Cocos3DPlayableAdPlugin.exe -path ./
