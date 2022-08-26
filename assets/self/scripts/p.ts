@@ -1,5 +1,5 @@
 import { _decorator, Component, Collider } from "cc";
-const { ccclass, property } = _decorator;
+const { ccclass } = _decorator;
 
 @ccclass("p")
 export class p extends Component {

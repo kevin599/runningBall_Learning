@@ -2,7 +2,7 @@
   "ver": "1.0.22",
   "importer": "image",
   "imported": true,
-  "uuid": "3e303b3c-9513-4900-9ca0-07db677c4689",
+  "uuid": "88f37e56-cca8-4170-8232-552c44a43773",
   "files": [
     ".png",
     ".json"
@@ -10,7 +10,7 @@
   "subMetas": {
     "6c48a": {
       "importer": "texture",
-      "uuid": "3e303b3c-9513-4900-9ca0-07db677c4689@6c48a",
+      "uuid": "88f37e56-cca8-4170-8232-552c44a43773@6c48a",
       "displayName": "bt_blue",
       "id": "6c48a",
       "name": "texture",
@@ -22,7 +22,7 @@
         "mipfilter": "none",
         "anisotropy": 0,
         "isUuid": true,
-        "imageUuidOrDatabaseUri": "3e303b3c-9513-4900-9ca0-07db677c4689"
+        "imageUuidOrDatabaseUri": "88f37e56-cca8-4170-8232-552c44a43773"
       },
       "ver": "1.0.21",
       "imported": true,
@@ -33,7 +33,7 @@
     },
     "f9941": {
       "importer": "sprite-frame",
-      "uuid": "3e303b3c-9513-4900-9ca0-07db677c4689@f9941",
+      "uuid": "88f37e56-cca8-4170-8232-552c44a43773@f9941",
       "displayName": "bt_blue",
       "id": "f9941",
       "name": "spriteFrame",
@@ -42,11 +42,11 @@
         "trimThreshold": 1,
         "rotated": false,
         "offsetX": 0,
-        "offsetY": 0.5,
+        "offsetY": 1,
         "trimX": 0,
         "trimY": 0,
         "width": 676,
-        "height": 227,
+        "height": 226,
         "rawWidth": 676,
         "rawHeight": 228,
         "borderTop": 0,
@@ -55,7 +55,7 @@
         "borderRight": 0,
         "packable": true,
         "isUuid": true,
-        "imageUuidOrDatabaseUri": "3e303b3c-9513-4900-9ca0-07db677c4689@6c48a",
+        "imageUuidOrDatabaseUri": "88f37e56-cca8-4170-8232-552c44a43773@6c48a",
         "atlasUuid": ""
       },
       "ver": "1.0.9",
@@ -69,6 +69,6 @@
   "userData": {
     "hasAlpha": true,
     "type": "sprite-frame",
-    "redirect": "3e303b3c-9513-4900-9ca0-07db677c4689@f9941"
+    "redirect": "88f37e56-cca8-4170-8232-552c44a43773@f9941"
   }
 }

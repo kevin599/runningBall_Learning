@@ -70,7 +70,7 @@
         "_value": false
       },
       "webview": {
-        "_value": true
+        "_value": false
       },
       "tween": {
         "_value": true
@@ -96,14 +96,13 @@
       "base",
       "gfx-webgl",
       "gfx-webgl2",
+      "tween",
       "3d",
-      "2d",
-      "ui",
       "particle",
       "physics-ammo",
       "primitive",
-      "webview",
-      "tween"
+      "2d",
+      "ui"
     ],
     "noDeprecatedFeatures": {
       "value": true,

@@ -1,5 +1,4 @@
-import { _decorator, Component, Node, Prefab, instantiate, Material, MeshRenderer, Color, Collider, find, Camera, Texture2D, sys, loader, SpriteFrame, Sprite } from "cc";
-import i18nMgr, { Language } from "./i18n/i18nMgr";
+import { _decorator, Component, Node, Prefab, instantiate, Material, MeshRenderer, Color, Collider, find, Camera, Texture2D, Vec3 } from "cc";
 const { ccclass, property } = _decorator;
 
 @ccclass("game")
@@ -25,28 +24,23 @@ export class game extends Component {
 	@property({ type: Texture2D })
 	textureBase: Texture2D[] = [];
 
+	// @property({ type: Texture2D })
+	// endlineTexture: Texture2D = null;
+
 	npcLever = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048];
 	npcColor = ["#bedbfeff", "#00bdffff", "#3ae474", "#8963ff", "#1eebff", "#017aff", "#0373ff", "#ff9bf7", "#ffb408", "#ff2eff", "#f8321f"];
 
 	onLoad() {
 		// set language
-		let curLanguage: Language = Language[sys.language];
-		console.log("curLanguage:", curLanguage);
 
-		i18nMgr.ins.setLanguage(curLanguage);
 		console.log("game load");
-		this.MAPINIT(30);
-
-		loader.loadRes(`i18n/sprite/${sys.language}/card`, SpriteFrame, (err, sp) => {
-			if (err) return console.error(err);
-			find("Canvas/pop/gift_card").getComponent(Sprite).spriteFrame = sp;
-		});
+		this.MAPINIT(14);
 
 		this.BALLINIT(this.npcColor.length - 1);
+		// add texture to role
 		find("/player/player").getComponent(MeshRenderer).material.setProperty("albedoMap", this.textureBase[0]);
 	}
 
-	// 桥初始化
 	MAPINIT(num) {
 		for (let i = 0; i < num; i++) {
 			let road = instantiate(this.road);
@@ -55,30 +49,45 @@ export class game extends Component {
 			// road.setPosition(0, 0, -i);
 			// road02
 			road.setPosition(0, 0, -i * 3);
-			road.getChildByName("road").getComponent(MeshRenderer).material.setProperty("mainColor", new Color(211, 227, 243));
 			road.getChildByName("sideL").getComponent(MeshRenderer).material.setProperty("mainColor", new Color(146, 157, 243));
 			road.getChildByName("sideR").getComponent(MeshRenderer).material.setProperty("mainColor", new Color(146, 157, 243));
+			road.getChildByName("road").getComponent(MeshRenderer).material.setProperty("mainColor", new Color(211, 227, 243));
+			if (i == num - 3) {
+				// road.getChildByName("road").getComponent(MeshRenderer).material.setProperty("albedoMap", this.endlineTexture);
+				road.name = "endline";
+			}
+		}
+		this.ENDLINEINIT();
+		// init mutil color bridge
+		for (let j = 0; j < this.textureBase.length; j++) {
+			let road1 = instantiate(this.road);
+			road1.parent = this.roadParent;
+			//   position start -num*3
+			road1.getChildByName("sideL").active = false;
+			road1.getChildByName("sideR").active = false;
+			road1.setPosition(0, 0, -num * 3 - j * 3);
+			road1.name = "color_bridge" + Math.pow(2, j + 1);
+
+			let child = road1.getChildByName("road");
+			child.getComponent(MeshRenderer).material.setProperty("albedoMap", this.textureBase[j]);
+			child.setWorldRotationFromEuler(0, -90, 90);
+
+			child.setScale(new Vec3(0.05, 1, 1.5));
 		}
 	}
 
-	// 桥上小球初始化
+	ENDLINEINIT() {
+		try {
+		} catch (error) {
+			console.error(error);
+		}
+	}
 	BALLINIT(num) {
 		for (let i = 0; i < num; i++) {
 			let npc = instantiate(this.npc);
-
 			npc.parent = this.npcParent;
-
 			npc.setPosition(i % 2 == 0 ? 0.75 : -0.75, 3.5, -1 * (2.5 + 2.25 * i));
-			// 最后一个 z = -1 * (3 + 2.25 * 9 )≈23
-			// this.SETMTL(i);
-
-			// npc.getComponent(MeshRenderer).material.setProperty("mainColor", new Color(new Color().fromHEX(this.npcColor[i])));
-			// 为小球添加分组
 			npc.getComponent(Collider).attachedRigidBody.group = Math.pow(2, i + 1);
-
-			// npc 贴图
-			let pass = npc.getComponent(MeshRenderer).material.passes[0];
-			// pass.properties.albedoMap.value = this.textureBase[0];
 			npc.getComponent(MeshRenderer).material.setProperty("albedoMap", this.textureBase[i]);
 		}
 	}
@@ -114,25 +123,6 @@ export class game extends Component {
 
 	download() {
 		console.log("download");
-		// gameDownload();
+		linkToStore();
 	}
-
-	// addRichText(num: Number, node: Node) {
-	// 	// node.setComponent
-	// 	// script.carema = main carema
-	// 	// script.target = npc:Node.children(name:playertext)
-	// 	// script mount in uitext:Node(RichText)
-	// 	// 1 new uinode richtext into canvas
-	// 	let richtext = instantiate(this.uiRichText);
-	// 	richtext.setParent(find("/Canvas"));
-	// 	richtext.name = `richText${num}`;
-	// 	richtext.getComponent(RichText).string = `<outline color=#1d2b3e width=1><b>${num}</b></outline>`;
-	// 	// 2 script mount in uinode
-	// 	richtext.addComponent(headscript);
-	// 	// set carema , target
-	// 	let script = richtext.getComponent(headscript);
-	// 	script.camera = this.mainCamera;
-	// 	script.target = node.getChildByName("playertext");
-	// 	script.distance = 5;
-	// }
 }

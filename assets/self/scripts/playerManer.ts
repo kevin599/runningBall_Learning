@@ -22,6 +22,7 @@ import {
 	Prefab,
 	instantiate,
 	Texture2D,
+	find,
 } from "cc";
 const { ccclass, property } = _decorator;
 
@@ -32,6 +33,9 @@ export class playerManer extends Component {
 
 	@property({ type: Node })
 	mainCamera: Node = null;
+
+	@property({ type: Prefab })
+	caidai: Prefab = null;
 
 	@property({ type: Node })
 	guideUI: Node = null;
@@ -52,18 +56,14 @@ export class playerManer extends Component {
 	borderDis: number = 1.2;
 
 	gameStart: boolean = false;
-	// 添加小球刚体变量
+
 	ballRigidBody: RigidBody = null;
 
-	// 材质
 	@property({ type: Material })
 	mtl: Material = null;
 
 	@property({ type: CCFloat })
 	scale: number = 0.01;
-
-	@property({ type: Prefab })
-	caidai: Prefab = null;
 
 	curLeverNum: number = 0;
 
@@ -71,21 +71,22 @@ export class playerManer extends Component {
 
 	gameEnd: boolean = false;
 
-	// 屏幕
 	winSize: Size = null;
-	// 手指初次点击的屏幕坐标
+
 	touchStartPos: Vec2 = new Vec2();
-	// 手指移动位置坐标
+
 	touchMovePos: Vec2 = new Vec2();
 
 	disBewteenBallAndCamera: number = 0;
 	@property({ type: Texture2D })
 	textureBase: Texture2D[] = [];
 
+	endline: Node = null;
 	npcLever = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048];
 	npcColor = ["#bedbfe", "#00bdff", "#3ae474", "#8963ff", "#1eebff", "#017aff", "#0373ff", "#ff9bf7", "#ffb408", "#ff2eff", "#f8321f"];
 	onLoad() {
-		// 为小球添加线性推力
+		this.endline = find("/road").getChildByName("endline");
+
 		this.ballRigidBody = this.ball.getComponent(RigidBody);
 		this.ball.getComponent(MeshRenderer).material.setProperty("mainColor", new Color(new Color().fromHEX(this.npcColor[0])));
 
@@ -97,32 +98,44 @@ export class playerManer extends Component {
 		coll.on("onCollisionEnter", this.onCollisionEnter, this);
 		if (screen.windowSize.x >= screen.windowSize.y) {
 			this.h_ui.active = true;
+			this.pop.setScale(new Vec3(1, 1, 1));
+			this.guideUI.setScale(new Vec3(1, 1, 1));
+			console.log("pop un scale");
 		} else {
 			this.h_ui.active = false;
+			this.pop.setScale(new Vec3(1.6, 1.6, 1));
+			this.guideUI.setScale(new Vec3(1.6, 1.6, 1));
+			console.log("pop scale");
 		}
 
 		// 监听转屏
 		view.setResizeCallback(() => {
+			console.log("resize");
+
 			if (screen.windowSize.x >= screen.windowSize.y) {
 				this.h_ui.active = true;
+				this.pop.setScale(new Vec3(1, 1, 1));
+				this.guideUI.setScale(new Vec3(1, 1, 1));
+				console.log("pop un scale");
 			} else {
+				console.log("pop scale");
 				this.h_ui.active = false;
+				this.pop.setScale(new Vec3(1.6, 1.6, 1));
+				this.guideUI.setScale(new Vec3(1.6, 1.6, 1));
 			}
 		});
 
 		director.once("end", this.end, this);
 		director.once("popshow", this.popShow, this);
+		director.once("toEndLine", this.TOENDLINE, this);
 	}
 
 	end() {
-		console.log(" emit end");
-		director.emit("popshow");
-		this.node.off(Node.EventType.TOUCH_START, this.touchStart, this);
-		this.node.off(Node.EventType.TOUCH_MOVE, this.touchMove, this);
-		this.node.off(Node.EventType.TOUCH_END, this.touchEnd, this);
-		this.gameStart = false;
-		// 增大小球推力
-		// this.ballRigidBody.setAngularVelocity(new Vec3(-2 * this.power, 0, 0));
+		// console.log(" emit end");
+		let caidaiprefab = instantiate(this.caidai);
+		caidaiprefab.setRotationFromEuler(new Vec3(0, -90, 0));
+		caidaiprefab.setParent(this.ball);
+
 		this.gameEnd = true;
 	}
 
@@ -250,9 +263,7 @@ export class playerManer extends Component {
 		let ballPos = this.ball.getPosition();
 		this.ball.setPosition(ballPos.x + touchMoveDis.x / 100, ballPos.y);
 	}
-	touchEnd(event: EventTouch) {
-		// console.log("touch end");
-	}
+	touchEnd(event: EventTouch) {}
 
 	start() {
 		// [3]
@@ -269,13 +280,11 @@ export class playerManer extends Component {
 		if (this.gameStart) {
 			this.ballRigidBody.setAngularVelocity(new Vec3(-this.power, 0, 0));
 		}
-		if (this.ball.getPosition().z <= -22) {
-			// 假设一个都不变就位移到最后一个npc的位置就结束
-			director.emit("popshow");
-			director.emit("end");
+		if (this.ball.getPosition().z <= this.endline.getPosition().z) {
 			// 清除力
+			director.emit("toEndLine");
 			this.ballRigidBody.setAngularVelocity(new Vec3(0, 0, 0));
-			this.gameStart = false;
+
 			this.gameEnd = true;
 		}
 		if (this.ball.getPosition().y < 0 && this.gameStart) {
@@ -306,7 +315,6 @@ export class playerManer extends Component {
 	updateLever(lever: number, other_node?: Node) {
 		this.ball.getComponent(Collider).attachedRigidBody.group = Math.pow(2, lever + 1);
 		let ball_lever = this.ball.getComponent(Collider).attachedRigidBody.group;
-		// console.log("小球当前的group:", ball_lever);
 
 		// 获取scale
 		let scale = this.ball.getScale();
@@ -318,19 +326,11 @@ export class playerManer extends Component {
 		this.ball.getComponent(MeshRenderer).material.setProperty("albedoMap", this.textureBase[lever]);
 
 		if (ball_lever == this.npcLever[this.npcLever.length - 1]) {
-			director.emit("popshow");
-			director.emit("end");
-			// 加载caidai预制体
+			this.TOENDLINE();
 		}
 	}
 
 	popShow() {
-		let caidaiprefab = instantiate(this.caidai);
-		// 将caidai放在小球的位置
-		caidaiprefab.setRotationFromEuler(new Vec3(0, -90, 0));
-		caidaiprefab.setParent(this.ball);
-		console.log("popshow");
-		this.ballRigidBody.setAngularVelocity(new Vec3(0, 0, 0));
 		this.pop.setScale(new Vec3(0, 0, 0));
 		this.pop.active = true;
 		//缓动 把pop放大
@@ -338,10 +338,44 @@ export class playerManer extends Component {
 			.to(0.5, { scale: new Vec3(1, 1, 1) })
 			.start();
 	}
-}
 
-// 相机跟随小球
-// 获取相机的世界坐标
-// 获取小球的世界坐标
-// 计算两者之间的距离
-// 保持两者之间的距离
+	TOENDLINE() {
+		this.node.off(Node.EventType.TOUCH_START, this.touchStart, this);
+		this.node.off(Node.EventType.TOUCH_MOVE, this.touchMove, this);
+		this.node.off(Node.EventType.TOUCH_END, this.touchEnd, this);
+		let P: Vec3 = this.ball.getPosition();
+		this.ball.setPosition(0, P.y, P.z);
+		let end_lever = this.GET_BALL_LEVER();
+		// console.log(this.GET_BALL_LEVER());
+		this.ballRigidBody.setLinearVelocity(new Vec3(0, 0, -this.power / 2));
+		// this.ballRigidBody.setAngularVelocity(new Vec3(-this.power * 2, 0, 0));
+
+		let cb = function () {
+			// this.ballRigidBody.setLinearVelocity(new Vec3(0, 0, -this.power / 2));
+			this.ballRigidBody.setAngularVelocity(new Vec3(-2 * this.power, 0, 0));
+			let end_p: Vec3 = this.GET_END_P(end_lever);
+			if (this.ball.getPosition().z <= end_p.z) {
+				console.log("end");
+				this.gameStart = false;
+				this.ballRigidBody.clearState();
+				this.unscheduleAllCallbacks();
+				this.ball.setPosition(new Vec3(0, this.ball.getPosition().y, end_p.z + 1));
+				this.ball.setRotationFromEuler(new Vec3(0, -90, 60));
+				director.emit("end");
+				setTimeout(() => {
+					director.emit("popshow");
+				}, 700);
+			}
+		};
+		this.schedule(cb, 0.01);
+	}
+	GET_BALL_LEVER() {
+		return this.ball.getComponent(Collider).attachedRigidBody.group;
+	}
+
+	GET_END_P(num: Number): Vec3 {
+		return find("road")
+			.getChildByName("color_bridge" + num)
+			.getPosition();
+	}
+}
