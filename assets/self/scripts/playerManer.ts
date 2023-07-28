@@ -23,6 +23,7 @@ import {
 	instantiate,
 	Texture2D,
 	find,
+	UIOpacity,
 } from "cc";
 const { ccclass, property } = _decorator;
 
@@ -100,27 +101,27 @@ export class playerManer extends Component {
 			this.h_ui.active = true;
 			this.pop.setScale(new Vec3(1, 1, 1));
 			this.guideUI.setScale(new Vec3(1, 1, 1));
-			console.log("pop un scale");
+			// console.log("pop un scale");
 		} else {
 			this.h_ui.active = false;
-			this.pop.setScale(new Vec3(1.6, 1.6, 1));
+			this.pop.setScale(new Vec3(2, 2, 1));
 			this.guideUI.setScale(new Vec3(1.6, 1.6, 1));
-			console.log("pop scale");
+			// console.log("pop scale");
 		}
 
 		// 监听转屏
 		view.setResizeCallback(() => {
-			console.log("resize");
+			// console.log("resize");
 
 			if (screen.windowSize.x >= screen.windowSize.y) {
 				this.h_ui.active = true;
 				this.pop.setScale(new Vec3(1, 1, 1));
 				this.guideUI.setScale(new Vec3(1, 1, 1));
-				console.log("pop un scale");
+				// console.log("pop un scale");
 			} else {
-				console.log("pop scale");
+				// console.log("pop scale");
 				this.h_ui.active = false;
-				this.pop.setScale(new Vec3(1.6, 1.6, 1));
+				this.pop.setScale(new Vec3(1.3, 1.3, 1));
 				this.guideUI.setScale(new Vec3(1.6, 1.6, 1));
 			}
 		});
@@ -263,7 +264,7 @@ export class playerManer extends Component {
 		let ballPos = this.ball.getPosition();
 		this.ball.setPosition(ballPos.x + touchMoveDis.x / 100, ballPos.y);
 	}
-	touchEnd(event: EventTouch) {}
+	touchEnd(event: EventTouch) { }
 
 	start() {
 		// [3]
@@ -331,12 +332,30 @@ export class playerManer extends Component {
 	}
 
 	popShow() {
-		this.pop.setScale(new Vec3(0, 0, 0));
+		// this.pop.setScale(new Vec3(0, 0, 0));
 		this.pop.active = true;
 		//缓动 把pop放大
-		tween(this.pop)
-			.to(0.5, { scale: new Vec3(1, 1, 1) })
-			.start();
+		// tween(this.pop)
+		// 	.to(0.5, { scale: new Vec3(1, 1, 1) })
+		// 	.start();
+
+		let mask: Node = this.pop.getChildByName('mask');
+		let maskOpacity: UIOpacity = mask.getComponent(UIOpacity);
+		tween(maskOpacity).call(() => {
+			maskOpacity.opacity = 0;
+		}).to(0.5, { opacity: 200 }).start();
+
+		let card: Node = this.pop.getChildByName('card');
+		let button: Node = this.pop.getChildByName('button');
+
+		// let mytween = tween().to(0.2, { scale: 1.1 }).to(0.1, { scale: 1 });
+		// mytween.clone(card).start();
+		// mytween.clone(button).start();
+
+		tween(card).to(0.2, { scale: new Vec3(1.1, 1.1, 1) }).to(0.1, { scale: new Vec3(1, 1, 1) }).start();
+		tween(button).to(0.2, { scale: new Vec3(1.1, 1.1, 1) }).to(0.1, { scale: new Vec3(1, 1, 1) }).union().repeatForever().start();
+
+
 	}
 
 	TOENDLINE() {
@@ -347,7 +366,7 @@ export class playerManer extends Component {
 		this.ball.setPosition(0, P.y, P.z);
 		let end_lever = this.GET_BALL_LEVER();
 		// console.log(this.GET_BALL_LEVER());
-		this.ballRigidBody.setLinearVelocity(new Vec3(0, 0, -this.power / 2));
+		this.ballRigidBody.setLinearVelocity(new Vec3(0, 0, -this.power / 1.25));
 		// this.ballRigidBody.setAngularVelocity(new Vec3(-this.power * 2, 0, 0));
 
 		let cb = function () {

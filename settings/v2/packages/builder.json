@@ -1,0 +1,12 @@
+{
+  "splash-setting": {
+    "url": "D:\\smallStep\\Cocos\\download\\runningBall_Learning-master\\assets\\self\\res\\img\\Ball-Run.png",
+    "clearColor": {
+      "x": 1,
+      "y": 1,
+      "z": 1,
+      "w": 1
+    },
+    "displayWatermark": false
+  }
+}

@@ -24,16 +24,15 @@ export class game extends Component {
 	@property({ type: Texture2D })
 	textureBase: Texture2D[] = [];
 
-	// @property({ type: Texture2D })
-	// endlineTexture: Texture2D = null;
+	@property({ type: Texture2D })
+	endlineTexture: Texture2D = null;
 
 	npcLever = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048];
 	npcColor = ["#bedbfeff", "#00bdffff", "#3ae474", "#8963ff", "#1eebff", "#017aff", "#0373ff", "#ff9bf7", "#ffb408", "#ff2eff", "#f8321f"];
 
 	onLoad() {
-		// set language
+		// set language 
 
-		console.log("game load");
 		this.MAPINIT(14);
 
 		this.BALLINIT(this.npcColor.length - 1);
@@ -53,7 +52,7 @@ export class game extends Component {
 			road.getChildByName("sideR").getComponent(MeshRenderer).material.setProperty("mainColor", new Color(146, 157, 243));
 			road.getChildByName("road").getComponent(MeshRenderer).material.setProperty("mainColor", new Color(211, 227, 243));
 			if (i == num - 3) {
-				// road.getChildByName("road").getComponent(MeshRenderer).material.setProperty("albedoMap", this.endlineTexture);
+				road.getChildByName("road").getComponent(MeshRenderer).material.setProperty("albedoMap", this.endlineTexture);
 				road.name = "endline";
 			}
 		}
@@ -118,11 +117,11 @@ export class game extends Component {
 	}
 
 	start() {
-		console.log("game start");
 	}
 
 	download() {
 		console.log("download");
+		// @ts-ignore
 		linkToStore();
 	}
 }
