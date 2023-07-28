@@ -5,8 +5,6 @@ import i18nMgr, { Language } from "./i18nMgr";
 import EventManager from "../eazax-ccc/EventManager";
 @ccclass
 export default class MainI18N extends Component {
-    @property({ type: SpriteFrame })
-    spf: SpriteFrame = null;
     //单例
     private static _ins: MainI18N;
     public static get ins() {

@@ -24,6 +24,7 @@ import {
 	Texture2D,
 	find,
 	UIOpacity,
+	Layers,
 } from "cc";
 const { ccclass, property } = _decorator;
 
@@ -77,6 +78,8 @@ export class playerManer extends Component {
 	touchStartPos: Vec2 = new Vec2();
 
 	touchMovePos: Vec2 = new Vec2();
+
+	private isInitFinish: boolean = false;
 
 	disBewteenBallAndCamera: number = 0;
 	@property({ type: Texture2D })
@@ -132,9 +135,10 @@ export class playerManer extends Component {
 	}
 
 	end() {
+		// this.ball.setRotationFromEuler(new Vec3(0, 80, -30));
 		// console.log(" emit end");
 		let caidaiprefab = instantiate(this.caidai);
-		caidaiprefab.setRotationFromEuler(new Vec3(0, -90, 0));
+		caidaiprefab.setRotationFromEuler(new Vec3(45, 90, 0));
 		caidaiprefab.setParent(this.ball);
 
 		this.gameEnd = true;
@@ -237,11 +241,16 @@ export class playerManer extends Component {
 
 					break;
 			}
+		} else if (other_attach_group == 1 << 12) {
+			// console.log('touch road game start');
+			this.isInitFinish = true;
 		}
 	}
 
 	touchStart(event: EventTouch) {
+		if (!this.isInitFinish) return
 		this.gameStart = true;
+
 		this.guideUI.active = false;
 		// 获取初次点击屏幕的坐标，获取手指移动距离
 		// 将移动距离转化为 小球的x轴移动的距离
@@ -267,6 +276,7 @@ export class playerManer extends Component {
 	touchEnd(event: EventTouch) { }
 
 	start() {
+		// this.end()
 		// [3]
 		//获取相机的世界坐标
 		let cameraWorldPos = this.camera.getWorldPosition();
@@ -280,18 +290,17 @@ export class playerManer extends Component {
 	update(deltaTime: number) {
 		if (this.gameStart) {
 			this.ballRigidBody.setAngularVelocity(new Vec3(-this.power, 0, 0));
+			this.ballRigidBody.setLinearVelocity(new Vec3(0, 0, -this.power / 2));
 		}
-		if (this.ball.getPosition().z <= this.endline.getPosition().z) {
+		if (this.ball.getPosition().z <= this.endline.getPosition().z && !this.gameEnd) {
 			// 清除力
 			director.emit("toEndLine");
 			this.ballRigidBody.setAngularVelocity(new Vec3(0, 0, 0));
-
 			this.gameEnd = true;
 		}
-		if (this.ball.getPosition().y < 0 && this.gameStart) {
+		if (this.ball.getPosition().y < 0 && this.gameStart && !this.gameEnd) {
 			director.emit("popshow");
 			director.emit("end");
-
 			// 清除力
 			this.ballRigidBody.setAngularVelocity(new Vec3(0, 0, 0));
 			this.gameStart = false;
@@ -366,12 +375,12 @@ export class playerManer extends Component {
 		this.ball.setPosition(0, P.y, P.z);
 		let end_lever = this.GET_BALL_LEVER();
 		// console.log(this.GET_BALL_LEVER());
-		this.ballRigidBody.setLinearVelocity(new Vec3(0, 0, -this.power / 1.25));
-		// this.ballRigidBody.setAngularVelocity(new Vec3(-this.power * 2, 0, 0));
+		this.ballRigidBody.setLinearVelocity(new Vec3(0, 0, -this.power));
 
 		let cb = function () {
-			// this.ballRigidBody.setLinearVelocity(new Vec3(0, 0, -this.power / 2));
 			this.ballRigidBody.setAngularVelocity(new Vec3(-2 * this.power, 0, 0));
+			this.ballRigidBody.setLinearVelocity(new Vec3(0, 0, -this.power * 1.5));
+
 			let end_p: Vec3 = this.GET_END_P(end_lever);
 			if (this.ball.getPosition().z <= end_p.z) {
 				console.log("end");
@@ -379,11 +388,12 @@ export class playerManer extends Component {
 				this.ballRigidBody.clearState();
 				this.unscheduleAllCallbacks();
 				this.ball.setPosition(new Vec3(0, this.ball.getPosition().y, end_p.z + 1));
-				this.ball.setRotationFromEuler(new Vec3(0, -90, 60));
+				// this.ball.setRotationFromEuler(new Vec3(0, -90, 60));
+				this.ball.setRotationFromEuler(new Vec3(0, 80, -30));
 				director.emit("end");
 				setTimeout(() => {
 					director.emit("popshow");
-				}, 700);
+				}, 1000);
 			}
 		};
 		this.schedule(cb, 0.01);
