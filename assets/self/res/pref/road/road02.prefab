@@ -86,7 +86,7 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": -0.75,
+      "x": -1,
       "y": 0,
       "z": 0
     },
@@ -125,7 +125,7 @@
     },
     "_materials": [
       {
-        "__uuid__": "43c2ad9f-cd32-42eb-9937-8bd4e55dd8c2",
+        "__uuid__": "f2d89e65-6098-4c00-9c2d-ce0fde8811e2",
         "__expectedType__": "cc.Material"
       }
     ],
@@ -160,7 +160,7 @@
     "_castShadow": false,
     "_receiveShadow": false,
     "_recieveShadow": false,
-    "_lightmapSize": 64
+    "_lightmapSize": 128
   },
   {
     "__type__": "cc.RigidBody",
@@ -264,7 +264,7 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 0.75,
+      "x": 1,
       "y": 0,
       "z": 0
     },
@@ -303,7 +303,7 @@
     },
     "_materials": [
       {
-        "__uuid__": "43c2ad9f-cd32-42eb-9937-8bd4e55dd8c2",
+        "__uuid__": "f2d89e65-6098-4c00-9c2d-ce0fde8811e2",
         "__expectedType__": "cc.Material"
       }
     ],
@@ -336,8 +336,8 @@
     },
     "_bakeable": false,
     "_castShadow": false,
-    "_receiveShadow": false,
-    "_recieveShadow": false,
+    "_receiveShadow": true,
+    "_recieveShadow": true,
     "_lightmapSize": 64
   },
   {
@@ -456,7 +456,7 @@
     "_lscale": {
       "__type__": "cc.Vec3",
       "x": 0.05,
-      "y": 1.5,
+      "y": 2,
       "z": 1
     },
     "_layer": 1073741824,
@@ -472,6 +472,7 @@
     "__type__": "cc.MeshRenderer",
     "_name": "Cube<ModelComponent>",
     "_objFlags": 0,
+    "__editorExtras__": {},
     "node": {
       "__id__": 20
     },
@@ -522,6 +523,7 @@
     "__type__": "cc.RigidBody",
     "_name": "",
     "_objFlags": 0,
+    "__editorExtras__": {},
     "node": {
       "__id__": 20
     },
@@ -558,6 +560,7 @@
     "__type__": "cc.BoxCollider",
     "_name": "",
     "_objFlags": 0,
+    "__editorExtras__": {},
     "node": {
       "__id__": 20
     },

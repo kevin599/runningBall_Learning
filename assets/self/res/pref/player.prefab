@@ -45,9 +45,9 @@
     "_lrot": {
       "__type__": "cc.Quat",
       "x": 0,
-      "y": -0.7071067811865475,
+      "y": -1,
       "z": 0,
-      "w": 0.7071067811865476
+      "w": 6.123233995736766e-17
     },
     "_lscale": {
       "__type__": "cc.Vec3",
@@ -59,7 +59,7 @@
     "_euler": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": -90,
+      "y": -180,
       "z": 0
     },
     "_id": ""
@@ -87,7 +87,7 @@
       "__id__": 4
     },
     "_mesh": {
-      "__uuid__": "1263d74c-8167-4928-91a6-4e2672411f47@17020",
+      "__uuid__": "cfec2933-782d-49b5-91d3-62ebfc3d7148@6a800",
       "__expectedType__": "cc.Mesh"
     },
     "_shadowCastingMode": 0,
@@ -132,7 +132,7 @@
     "_mass": 0.0001,
     "_allowSleep": false,
     "_linearDamping": 0,
-    "_angularDamping": 0.1,
+    "_angularDamping": 0,
     "_useGravity": true,
     "_linearFactor": {
       "__type__": "cc.Vec3",

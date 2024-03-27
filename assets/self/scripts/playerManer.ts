@@ -63,7 +63,7 @@ export class playerManer extends Component {
 	mtl: Material = null;
 
 	@property({ type: CCFloat })
-	scale: number = 0.01;
+	scale: number = 0.1;
 
 	curLeverNum: number = 0;
 
@@ -88,7 +88,7 @@ export class playerManer extends Component {
 		this.endline = find("/road").getChildByName("endline");
 
 		this.ballRigidBody = this.ball.getComponent(RigidBody);
-		this.ball.getComponent(MeshRenderer).material.setProperty("mainColor", new Color(new Color().fromHEX(this.npcColor[0])));
+		// this.ball.getComponent(MeshRenderer).material.setProperty("mainColor", new Color(new Color().fromHEX(this.npcColor[1])));
 
 		this.node.on(Node.EventType.TOUCH_START, this.touchStart, this);
 		this.node.on(Node.EventType.TOUCH_MOVE, this.touchMove, this);
@@ -103,7 +103,7 @@ export class playerManer extends Component {
 			console.log("pop un scale");
 		} else {
 			this.h_ui.active = false;
-			this.pop.setScale(new Vec3(1.6, 1.6, 1));
+			this.pop.setScale(new Vec3(1.3, 1.3, 1));
 			this.guideUI.setScale(new Vec3(1.6, 1.6, 1));
 			console.log("pop scale");
 		}
@@ -120,7 +120,7 @@ export class playerManer extends Component {
 			} else {
 				console.log("pop scale");
 				this.h_ui.active = false;
-				this.pop.setScale(new Vec3(1.6, 1.6, 1));
+				this.pop.setScale(new Vec3(1.3, 1.3, 1));
 				this.guideUI.setScale(new Vec3(1.6, 1.6, 1));
 			}
 		});
@@ -133,7 +133,7 @@ export class playerManer extends Component {
 	end() {
 		// console.log(" emit end");
 		let caidaiprefab = instantiate(this.caidai);
-		caidaiprefab.setRotationFromEuler(new Vec3(0, -90, 0));
+		caidaiprefab.setRotationFromEuler(new Vec3(-60, 0, 0));
 		caidaiprefab.setParent(this.ball);
 
 		this.gameEnd = true;
@@ -279,6 +279,7 @@ export class playerManer extends Component {
 	update(deltaTime: number) {
 		if (this.gameStart) {
 			this.ballRigidBody.setAngularVelocity(new Vec3(-this.power, 0, 0));
+			this.ballRigidBody.setLinearVelocity(new Vec3(0, 0, -this.power / 3.1));
 		}
 		if (this.ball.getPosition().z <= this.endline.getPosition().z) {
 			// 清除力
@@ -348,19 +349,21 @@ export class playerManer extends Component {
 		let end_lever = this.GET_BALL_LEVER();
 		// console.log(this.GET_BALL_LEVER());
 		this.ballRigidBody.setLinearVelocity(new Vec3(0, 0, -this.power / 2));
+		this.ballRigidBody.setAngularVelocity(new Vec3(-this.power, 0, 0));
 		// this.ballRigidBody.setAngularVelocity(new Vec3(-this.power * 2, 0, 0));
 
 		let cb = function () {
 			// this.ballRigidBody.setLinearVelocity(new Vec3(0, 0, -this.power / 2));
-			this.ballRigidBody.setAngularVelocity(new Vec3(-2 * this.power, 0, 0));
+			this.ballRigidBody.setLinearVelocity(new Vec3(0, 0, -this.power));
+			this.ballRigidBody.setAngularVelocity(new Vec3(-2.5 * this.power, 0, 0));
 			let end_p: Vec3 = this.GET_END_P(end_lever);
 			if (this.ball.getPosition().z <= end_p.z) {
 				console.log("end");
 				this.gameStart = false;
 				this.ballRigidBody.clearState();
 				this.unscheduleAllCallbacks();
-				this.ball.setPosition(new Vec3(0, this.ball.getPosition().y, end_p.z + 1));
-				this.ball.setRotationFromEuler(new Vec3(0, -90, 60));
+				this.ball.setPosition(new Vec3(0, this.ball.getPosition().y, end_p.z + 0.5));
+				this.ball.setRotationFromEuler(new Vec3(35, -180, 0));
 				director.emit("end");
 				setTimeout(() => {
 					director.emit("popshow");
