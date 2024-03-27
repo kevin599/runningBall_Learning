@@ -173,7 +173,7 @@
     "__prefab": {
       "__id__": 7
     },
-    "_group": 1,
+    "_group": 4096,
     "_type": 2,
     "_mass": 1,
     "_allowSleep": true,
@@ -351,7 +351,7 @@
     "__prefab": {
       "__id__": 16
     },
-    "_group": 1,
+    "_group": 4096,
     "_type": 2,
     "_mass": 1,
     "_allowSleep": true,
@@ -531,7 +531,7 @@
     "__prefab": {
       "__id__": 25
     },
-    "_group": 1,
+    "_group": 4096,
     "_type": 2,
     "_mass": 1,
     "_allowSleep": true,
